@@ -26,7 +26,18 @@ namespace Checkout
                     throw new Exception($"Product not found with SKU {basketItem.SKU}");
                 }
 
-                totalPrice += (basketItem.Quantity * product.Price);
+                if(product.Discount != null)
+                {
+                    int totalDiscountGroups = basketItem.Quantity / product.Discount.Quantity;
+                    int remainingUndiscountedItems = basketItem.Quantity % product.Discount.Quantity;
+
+                    totalPrice += (totalDiscountGroups * product.Discount.DiscountPrice);
+                    totalPrice += (remainingUndiscountedItems * product.Price);
+
+                } else
+                {
+                    totalPrice += (basketItem.Quantity * product.Price);
+                }                
             }
 
             return totalPrice;

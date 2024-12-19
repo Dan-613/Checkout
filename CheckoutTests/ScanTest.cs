@@ -1,9 +1,9 @@
 namespace CheckoutTests
 {
-    public class UnitTest1
+    public class ScanTests
     {
         [Fact]
-        public void Test1()
+        public void ScanTest1()
         {
 
         }

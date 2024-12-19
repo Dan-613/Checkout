@@ -20,24 +20,7 @@ namespace Checkout
 
             foreach(var basketItem in basket)
             {
-                var product = products.First(p => p.SKU == basketItem.SKU);
-                if(product == null)
-                {
-                    throw new Exception($"Product not found with SKU {basketItem.SKU}");
-                }
-
-                if(product.Discount != null)
-                {
-                    int totalDiscountGroups = basketItem.Quantity / product.Discount.Quantity;
-                    int remainingUndiscountedItems = basketItem.Quantity % product.Discount.Quantity;
-
-                    totalPrice += (totalDiscountGroups * product.Discount.DiscountPrice);
-                    totalPrice += (remainingUndiscountedItems * product.Price);
-
-                } else
-                {
-                    totalPrice += (basketItem.Quantity * product.Price);
-                }                
+                totalPrice += basketItem.BasketItemTotal();
             }
 
             return totalPrice;
@@ -48,11 +31,11 @@ namespace Checkout
             var productFound = products.FirstOrDefault(p => p.SKU == SKU);
             if (productFound != null)
             {
-                var productInBasket = basket.FirstOrDefault(b => b.SKU == SKU);
+                var productInBasket = basket.FirstOrDefault(b => b.Product.SKU == SKU);
                 if (productInBasket != null)
                     productInBasket.Quantity += 1;
                 else
-                    basket.Add(new BasketItem { SKU = SKU, Quantity = 1 });
+                    basket.Add(new BasketItem { Product = productFound, Quantity = 1 });
             } else
             {
                 throw new ArgumentException($"Invalid item: {SKU}");

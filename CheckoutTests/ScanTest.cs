@@ -1,12 +1,24 @@
 
+using Checkout.Classes;
+
+using System.Text.Json;
+
 namespace CheckoutTests
 {
     public class ScanTests
     {
+        private List<Product> GetProducts()
+        {
+            var json = File.ReadAllText("products.json");
+            var products = JsonSerializer.Deserialize<List<Product>>(json);
+
+            return products;
+        }
+
         [Fact]
         public void ScanTest1_OneItem()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             Assert.True(checkout.GetTotalPrice() == 50,"Single Item Scan failed - total price should have been 50");
@@ -16,7 +28,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest2_MultipleSingleItems()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             checkout.Scan("B");
@@ -28,7 +40,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest3_MultipleIdenticalItems_NoSpecials()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("C");
             checkout.Scan("C");
@@ -41,7 +53,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest4_MultipleIdenticalItems_SpecialsOnly()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             checkout.Scan("A");
@@ -54,7 +66,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest5_SpecialsAndPartSpecials()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             checkout.Scan("A");
@@ -69,7 +81,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest6_NormalItemsAndSpecials()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             checkout.Scan("A");
@@ -84,7 +96,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest7_FullBasket()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             checkout.Scan("A");
             checkout.Scan("A");
@@ -104,7 +116,7 @@ namespace CheckoutTests
         [Fact]
         public void ScanTest8_TestInvalidSelection()
         {
-            var checkout = new Checkout.Checkout();
+            var checkout = new Checkout.Checkout(GetProducts());
 
             var exception = Assert.Throws <ArgumentException>(() => checkout.Scan("E"));
 
